@@ -1,0 +1,104 @@
+// reset
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+ol,
+ul {
+  list-style: none;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// variables
+$dark-bg: #242320;
+$darker-bg: #1b1a17;
+$light-border: #ff8303;
+$dark-border: #a35709;
+$light-text: #f0e3ca;
+
+// body
+body {
+  background-color: $darker-bg;
+}
+
+// header
+.title {
+  color: $light-text;
+}
+
+// aside
+aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  height: 100%;
+  width: 280px;
+  background-color: $dark-bg;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  a {
+    color: $light-text;
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  .btn--add-page {
+    color: $light-border;
+  }
+}
+
+.btn {
+  color: $light-border;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.aside-wrapper {
+  margin-top: 70px;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  gap: 2rem;
+}
+
+// header
+header {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+
+  .title {
+    padding: 20px;
+  }
+}
+
