@@ -8,9 +8,11 @@
   </head>
   <body>
     <div id="app">
+      <!-- header -->
       <header>
         <h1 class="title">to-do-list</h1>
       </header>
+      <!-- aside bar -->
       <aside>
         <div class="aside-wrapper">
           <ul class="project-list">
@@ -18,9 +20,53 @@
             <li><a href="#">Week</a></li>
             <li><a href="#">All Tasks</a></li>
           </ul>
-          <button type="button" class="btn"><span>+</span> add project</button>
+          <!-- project modal -->
+          <dialog id="project-modal">
+            <button id="close-project" class="close-btn" type="button">
+              X
+            </button>
+            <!-- modal form -->
+            <form id="project-form" method="dialog">
+              <input
+                type="text"
+                name="project-name"
+                id="project-name"
+                placeholder="project name"
+                required
+              />
+              <button class="submit-project" type="submit">+</button>
+            </form>
+          </dialog>
+          <button type="button" class="btn add-project">
+            <span>+</span> add project
+          </button>
         </div>
       </aside>
+      <!-- main -->
+      <main>
+        <!-- section -->
+        <section class="task-section">
+          <!-- task modal -->
+          <dialog id="task-modal">
+            <button id="close-task" class="close-btn" type="button">X</button>
+            <!-- modal form -->
+            <form id="task-form" method="dialog">
+              <input
+                type="text"
+                name="task-name"
+                id="task-name"
+                placeholder="task name"
+                required
+              />
+              <button class="submit-task" type="submit">+</button>
+            </form>
+          </dialog>
+          <button class="btn add-task" type="button">
+            <span>+</span> add task
+          </button>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
