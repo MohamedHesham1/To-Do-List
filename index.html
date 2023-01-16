@@ -44,16 +44,43 @@
           <!-- task modal -->
         <dialog id="task-modal" class="modal">
             <button id="close-task" class="close-btn" type="button">X</button>
-            <!-- modal form -->
+          <!-- task modal form -->
             <form id="task-form" method="dialog">
-              <input
-                type="text"
-                name="task-name"
-                id="task-name"
-                placeholder="task name"
-                required
-              />
-              <button class="submit-task" type="submit">+</button>
+            <fieldset id="task-fieldset">
+              <legend>Task details</legend>
+              <div class="row">
+                <div class="input-wrapper">
+                  <label for="task-name"> Task Name: </label>
+                  <input type="text" name="task-name" id="task-name" required />
+                </div>
+
+                <div class="input-wrapper">
+                  <label for="priority">Priority:</label>
+                  <select name="priority" id="priority">
+                    <option value="Low" selected>Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-wrapper">
+                  <label for="description"> Description: </label>
+                  <textarea
+                    name="description"
+                    id="description"
+                    rows="4"
+                    cols="30"
+                  ></textarea>
+                </div>
+                <div class="input-wrapper">
+                  <label for="due-date">Due Date:</label>
+                  <input type="date" id="due-date" name="due-date" />
+                </div>
+              </div>
+
+              <button class="submit-task btn-submit" type="submit">+</button>
+            </fieldset>
             </form>
           </dialog>
           <button class="btn add-task" type="button">
