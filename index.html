@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/list.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>To Do List</title>
   </head>
@@ -14,18 +14,15 @@
       </header>
       <!-- aside bar -->
       <aside>
-        <div class="aside-wrapper">
-          <ul class="project-list">
-            <li><a href="#">Today</a></li>
-            <li><a href="#">Week</a></li>
-            <li><a href="#">All Tasks</a></li>
-          </ul>
+        <nav class="projects-nav">
+          <ul class="project-list constant-projects"></ul>
+          <ul class="project-list new-projects"></ul>
           <!-- project modal -->
-          <dialog id="project-modal">
+          <dialog id="project-modal" class="modal">
             <button id="close-project" class="close-btn" type="button">
               X
             </button>
-            <!-- modal form -->
+            <!--  project form   -->
             <form id="project-form" method="dialog">
               <input
                 type="text"
@@ -34,20 +31,18 @@
                 placeholder="project name"
                 required
               />
-              <button class="submit-project" type="submit">+</button>
+              <button class="submit-project btn-submit" type="submit">+</button>
             </form>
           </dialog>
           <button type="button" class="btn add-project">
             <span>+</span> add project
           </button>
-        </div>
+        </nav>
       </aside>
       <!-- main -->
       <main>
-        <!-- section -->
-        <section class="task-section">
           <!-- task modal -->
-          <dialog id="task-modal">
+        <dialog id="task-modal" class="modal">
             <button id="close-task" class="close-btn" type="button">X</button>
             <!-- modal form -->
             <form id="task-form" method="dialog">
