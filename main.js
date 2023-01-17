@@ -29,3 +29,18 @@ function handleModal() {
   });
 }
 
+const handleForm = (() => {
+  const getFormData = () => {
+    const formData = new FormData(taskForm);
+    const taskData = Object.fromEntries(formData);
+
+    return taskData;
+  };
+  const resetForm = (e) => {
+    e.target.reset();
+    modals.forEach((modal) => {
+      modal.close();
+    });
+  };
+  return { getFormData, resetForm };
+})();
