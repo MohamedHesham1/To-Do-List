@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/list.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <title>To Do List</title>
   </head>
   <body>
@@ -12,42 +18,47 @@
       <header>
         <h1 class="title">to-do-list</h1>
       </header>
-      <!-- aside bar -->
-      <aside>
-        <nav class="projects-nav">
-          <ul class="project-list constant-projects"></ul>
-          <ul class="project-list new-projects"></ul>
-          <!-- project modal -->
-          <dialog id="project-modal" class="modal">
-            <button id="close-project" class="close-btn" type="button">
-              X
-            </button>
-            <!--  project form   -->
-            <form id="project-form" method="dialog">
-              <input
-                type="text"
-                name="project-name"
+      <!-- main -->
+      <main>
+        <!-- aside -->
+        <aside>
+          <nav class="projects-nav">
+            <ul class="project-list filter-projects">
+              <li><a href="#" class="project">Today</a></li>
+              <li><a href="#" class="project">Week</a></li>
+              <li><a href="#" class="project">All Projects</a></li>
+            </ul>
+            <h2 class="projects-header">Projects</h2>
+            <ul class="project-list new-projects"></ul>
+            <!-- project modal -->
+            <dialog id="project-modal" class="modal">
+              <button id="close-project" class="close-btn" type="button">
+                X
+              </button>
+              <!--  project form   -->
+              <form id="project-form" method="dialog">
+                <input
+                  type="text"
+                  name="project-name"
                   id="project-input"
-                placeholder="project name"
-                required
-              />
+                  placeholder="project name"
+                  required
+                />
                 <button class="submit-project btn-submit" type="submit">
                   +
                 </button>
-            </form>
-          </dialog>
-          <button type="button" class="btn add-project">
-            <span>+</span> add project
-          </button>
-        </nav>
-      </aside>
-      <!-- main -->
-      <main>
-          <!-- task modal -->
+              </form>
+            </dialog>
+            <button type="button" class="btn add-project">
+              <span>+</span> add project
+            </button>
+          </nav>
+        </aside>
+        <!-- task modal -->
         <dialog id="task-modal" class="modal">
-            <button id="close-task" class="close-btn" type="button">X</button>
+          <button id="close-task" class="close-btn" type="button">X</button>
           <!-- task modal form -->
-            <form id="task-form" method="dialog">
+          <form id="task-form" method="dialog">
             <fieldset id="task-fieldset">
               <legend>Task details</legend>
               <div class="row">
@@ -83,8 +94,8 @@
 
               <button class="submit-task btn-submit" type="submit">+</button>
             </fieldset>
-            </form>
-          </dialog>
+          </form>
+        </dialog>
         <!-- section -->
         <section class="task-section">
           <ul class="task-list"></ul>
