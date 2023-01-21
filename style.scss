@@ -104,6 +104,10 @@ aside {
 .aside-wrapper {
   margin-top: 70px;
 }
+.projects-nav {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
 
 .project-list {
   display: flex;
@@ -111,7 +115,41 @@ aside {
   justify-content: center;
   padding: 20px;
   text-align: center;
-  gap: 2rem;
+    gap: 1rem;
+  }
+  .project {
+    display: block;
+    padding: 12px;
+  }
+  .selected {
+    color: #a35709;
+    text-shadow: 1px 1px 2px black;
+    transform: scale(1.2);
+    transition: all 0.1s;
+  }
+}
+.projects-header {
+  align-self: center;
+  color: $light-border;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.new-projects {
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid black;
+  }
+  .delete-project {
+    border: 2px solid $dark-border;
+    color: $light-border;
+    background-color: $darker-bg;
+    height: 32px;
+    width: 32px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 }
 
 // header
