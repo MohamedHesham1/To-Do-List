@@ -27,11 +27,13 @@
               <input
                 type="text"
                 name="project-name"
-                id="project-name"
+                  id="project-input"
                 placeholder="project name"
                 required
               />
-              <button class="submit-project btn-submit" type="submit">+</button>
+                <button class="submit-project btn-submit" type="submit">
+                  +
+                </button>
             </form>
           </dialog>
           <button type="button" class="btn add-project">
@@ -75,7 +77,7 @@
                 </div>
                 <div class="input-wrapper">
                   <label for="due-date">Due Date:</label>
-                  <input type="date" id="due-date" name="due-date" />
+                  <input type="date" id="due-date" name="due-date" required />
                 </div>
               </div>
 
@@ -83,6 +85,9 @@
             </fieldset>
             </form>
           </dialog>
+        <!-- section -->
+        <section class="task-section">
+          <ul class="task-list"></ul>
           <button class="btn add-task" type="button">
             <span>+</span> add task
           </button>
