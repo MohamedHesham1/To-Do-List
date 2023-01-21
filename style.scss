@@ -41,6 +41,26 @@ $light-border: #ff8303;
 $dark-border: #a35709;
 $light-text: #f0e3ca;
 
+// global rule set
+.btn {
+  color: $light-border;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+input,
+textarea,
+select {
+  background-color: $dark-bg;
+  border: 1px solid $light-border;
+  border-radius: 5px;
+  color: rgba(240, 227, 202, 0.64);
+}
+input {
+  height: 32px;
+}
+
 // body
 body {
   background-color: $darker-bg;
