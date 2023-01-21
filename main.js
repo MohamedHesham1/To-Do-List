@@ -1,9 +1,7 @@
 import './style.scss';
-import { ManageTaskList } from './utils/manageTaskList.js';
-import { ManageProjects } from './utils/manageProjects.js';
-import { CreateProject } from './utils/createProject.js';
+import { HandleLocalStorageProjects } from './utils/handleLocalStorageProjects.js';
+import { HandleTaskList } from './utils/handleTaskList.js';
 
-// selectors
 const modals = document.querySelectorAll('.modal');
 const projectForm = document.querySelector('#project-form');
 const projectsNav = document.querySelector('.projects-nav');
@@ -29,6 +27,71 @@ function handleModal() {
   });
 }
 
+const getProjectList = () => HandleLocalStorageProjects.getProjectList();
+
+const addToLocalStorage = () => {
+  const isDuplicate = HandleLocalStorageProjects.getProject(projectInput.value);
+
+  if (isDuplicate) {
+    alert(`${projectInput.value} already exists!`);
+    return;
+  }
+  HandleLocalStorageProjects.addToProjectList(projectInput.value);
+};
+
+const removeFromLocalStorage = (e) => {
+  //! delete from local storage ,eventlistener for delete-project
+
+  if (e.target.classList.contains('delete-project')) {
+    const _projectName = e.target.previousElementSibling.innerText;
+    HandleLocalStorageProjects.removeProject(_projectName);
+  }
+};
+
+const displayProjects = () => {
+  const projectList = getProjectList();
+
+  projectList.forEach((project) => {
+    newProjects.innerHTML += `
+    <li ><a href="#" class ="project">${project.title} </a> <button class="delete-project">X</button> </li>`;
+  });
+};
+
+const handleProjectInteractions = (() => {
+  const addProjectPage = () => {
+    const project = HandleLocalStorageProjects.getProject(projectInput.value);
+    const projectNames = Array.from(
+      document.querySelectorAll('.new-projects li')
+    );
+    // check for duplicates
+    const isDuplicate = projectNames.find(
+      (item) => item.innerText === project.title
+    );
+
+    if (isDuplicate) return;
+
+    newProjects.innerHTML += `
+    <li ><a href="#" class ="project">${project.title}</a> <button class="delete-project">X</button></li>`;
+  };
+
+  const removeProjectPage = (e) => {
+    if (e.target.classList.contains('delete-project')) {
+      const _project = e.target.parentElement;
+      _project.remove();
+    }
+  };
+
+  const highlightProject = (e) => {
+    const projects = document.querySelectorAll('.project');
+    if (e.target.classList.contains('project')) {
+      projects.forEach((project) => {
+        project.classList.remove('selected');
+      });
+      e.target.classList.add('selected');
+    }
+  };
+  return { highlightProject, addProjectPage, removeProjectPage };
+})();
 const handleForm = (() => {
   const getFormData = () => {
     const formData = new FormData(taskForm);
