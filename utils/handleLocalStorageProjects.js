@@ -7,6 +7,12 @@ const HandleLocalStorageProjects = (() => {
     }
   };
 
+  const setFilterList = () => {
+    if (!localStorage.getItem('filterList')) {
+      localStorage.setItem('filterList', JSON.stringify([]));
+    }
+  };
+
   const getProjectList = () =>
     JSON.parse(localStorage.getItem('projectList')) || [];
 
@@ -17,6 +23,17 @@ const HandleLocalStorageProjects = (() => {
     _projectList.push(_project);
     localStorage.setItem('projectList', JSON.stringify(_projectList));
   };
+
+  const addToFilterList = (projectName) => {
+    const _filterList = JSON.parse(localStorage.getItem('filterList')) || [];
+    const _project = CreateProject(projectName);
+
+    _filterList.push(_project);
+    localStorage.setItem('filterList', JSON.stringify(_filterList));
+  };
+
+  const getFilterList = () =>
+    JSON.parse(localStorage.getItem('filterList')) || [];
 
   const getProject = (projectName) => {
     const _projectList = getProjectList();
@@ -35,8 +52,11 @@ const HandleLocalStorageProjects = (() => {
 
   return {
     setProjectList,
+    setFilterList,
     getProjectList,
     addToProjectList,
+    addToFilterList,
+    getFilterList,
     getProject,
     removeProject,
   };
