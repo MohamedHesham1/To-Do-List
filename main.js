@@ -36,9 +36,27 @@ const addToLocalStorage = () => {
     alert(`${projectInput.value} already exists!`);
     return;
   }
+
   HandleLocalStorageProjects.addToProjectList(projectInput.value);
 };
 
+const addFilterProjects = () => {
+  const filterProjects = ['All', 'Today', 'Week'];
+  const filterList = HandleLocalStorageProjects.getFilterList();
+  let duplicate = false;
+
+  for (let i = 0; i < filterList.length; i++) {
+    if (filterProjects[i] === filterList[i].title) {
+      duplicate = true;
+    }
+  }
+
+  if (duplicate) return;
+
+  filterProjects.forEach((project) => {
+    HandleLocalStorageProjects.addToFilterList(project);
+  });
+};
 const removeFromLocalStorage = (e) => {
   //! delete from local storage ,eventlistener for delete-project
 
@@ -49,21 +67,21 @@ const removeFromLocalStorage = (e) => {
 };
 
 const displayProjects = () => {
-  const projectList = getProjectList();
-
+  const projectList = HandleLocalStorageProjects.getProjectList();
   projectList.forEach((project) => {
     newProjects.innerHTML += `
     <li ><a href="#" class ="project">${project.title} </a> <button class="delete-project">X</button> </li>`;
   });
 };
 
-const handleProjectInteractions = (() => {
+const HandleProjectInteractions = (() => {
   const addProjectPage = () => {
     const project = HandleLocalStorageProjects.getProject(projectInput.value);
+
     const projectNames = Array.from(
       document.querySelectorAll('.new-projects li')
     );
-    // check for duplicates
+
     const isDuplicate = projectNames.find(
       (item) => item.innerText === project.title
     );
@@ -83,14 +101,28 @@ const handleProjectInteractions = (() => {
 
   const highlightProject = (e) => {
     const projects = document.querySelectorAll('.project');
+
     if (e.target.classList.contains('project')) {
       projects.forEach((project) => {
         project.classList.remove('selected');
       });
       e.target.classList.add('selected');
+      currentProject = e.target.innerText;
+      console.log(currentProject);
     }
   };
-  return { highlightProject, addProjectPage, removeProjectPage };
+
+  const highlightAllFilter = () => {
+    const allFilter = document.querySelector('.all-filter');
+    allFilter.classList.add('selected');
+  };
+
+  return {
+    highlightProject,
+    addProjectPage,
+    removeProjectPage,
+    highlightAllFilter,
+  };
 })();
 const handleForm = (() => {
   const getFormData = () => {
