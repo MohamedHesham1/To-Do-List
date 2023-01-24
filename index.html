@@ -16,7 +16,7 @@
     <div id="app">
       <!-- header -->
       <header>
-        <h1 class="title">to-do-list</h1>
+        <h1 class="title">Todo List</h1>
       </header>
       <!-- main -->
       <main>
@@ -24,9 +24,9 @@
         <aside>
           <nav class="projects-nav">
             <ul class="project-list filter-projects">
-              <li><a href="#" class="project">Today</a></li>
-              <li><a href="#" class="project">Week</a></li>
-              <li><a href="#" class="project">All Projects</a></li>
+              <li><a href="#" class="project all-filter">All</a></li>
+              <li><a href="#" class="project today-filter">Today</a></li>
+              <li><a href="#" class="project week-filter">Week</a></li>
             </ul>
             <h2 class="projects-header">Projects</h2>
             <ul class="project-list new-projects"></ul>
@@ -64,7 +64,7 @@
               <div class="row">
                 <div class="input-wrapper">
                   <label for="task-name"> Task Name: </label>
-                  <input type="text" name="task-name" id="task-name" required />
+                  <input type="text" name="taskName" id="task-name" required />
                 </div>
 
                 <div class="input-wrapper">
@@ -88,7 +88,7 @@
                 </div>
                 <div class="input-wrapper">
                   <label for="due-date">Due Date:</label>
-                  <input type="date" id="due-date" name="due-date" required />
+                  <input type="date" id="due-date" name="dueDate" required />
                 </div>
               </div>
 

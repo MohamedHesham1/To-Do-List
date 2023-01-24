@@ -5,34 +5,60 @@ const HandleTaskList = (() => {
   const _getFilterList = () =>
     JSON.parse(localStorage.getItem('filterList')) || [];
 
-  const _projectList = _getProjectList();
-  const _filterList = _getFilterList();
-
-  const addToTaskList = (list, projectName, task) => {
+  const getTaskList = (list, projectName) => {
     if (list === 'projectList') {
+      const _projectList = _getProjectList();
+
       const _project = _projectList.find(
         (project) => project.title === projectName
       );
-      _project.taskList.push(task);
+      return _project.taskList;
     } else if (list === 'filterList') {
+      const _filterList = _getFilterList();
+
       const _project = _filterList.find(
         (project) => project.title === projectName
       );
-      _project.taskList.push(task);
+      return _project.taskList;
+    } else {
+      const _project = list.find((project) => project.title === projectName);
+      return _project.taskList;
     }
   };
 
-  const getTaskList = (list, projectName) => {
+  const _checkForDuplicates = (project, taskItem) => {
+    return project.taskList.find((task) => task.taskName === taskItem.taskName);
+  };
+
+  const addToTaskList = (list, projectName, task) => {
     if (list === 'projectList') {
+      const _projectList = _getProjectList();
+
       const _project = _projectList.find(
         (project) => project.title === projectName
       );
-      return _project.taskList;
+
+      if (_checkForDuplicates(_project, task)) {
+        return;
+      }
+
+      _project.taskList.push(task);
+
+      localStorage.setItem('projectList', JSON.stringify(_projectList));
     } else if (list === 'filterList') {
+      const _filterList = _getFilterList();
+
       const _project = _filterList.find(
         (project) => project.title === projectName
       );
-      return _project.taskList;
+
+      if (_checkForDuplicates(_project, task)) {
+        return;
+      }
+
+      _project.taskList.push(task);
+
+      localStorage.setItem('filterList', JSON.stringify(_filterList));
     }
   };
 
@@ -41,14 +67,31 @@ const HandleTaskList = (() => {
     project.taskList.find((task) => task.taskName === taskName);
   };
 
-  const removeTask = (project, task) => {
-    let index = project.taskList.indexOf(task);
-    if (index !== -1) {
-      project.taskList.splice(index, 1);
+  const removeTask = (list, projectName, task) => {
+    if (list === 'projectList') {
+      const _project = _projectList.find(
+        (project) => project.title === projectName
+      );
+
+      const filteredList = _project.taskList.filter((taskItem) => {
+        return !(task.taskName === taskItem.taskName);
+      });
+
+      localStorage.setItem('projectList', JSON.stringify(filteredList));
+    } else if (list === 'filterList') {
+      const _project = _filterList.find(
+        (project) => project.title === projectName
+      );
+
+      const filteredList = _project.taskList.filter((taskItem) => {
+        return !(task.taskName === taskItem.taskName);
+      });
+
+      localStorage.setItem('filterList', JSON.stringify(filteredList));
     }
   };
 
-  return { addToTaskList, getTask, getTaskList, removeTask };
+  return { addToTaskList, getTask, getTaskList };
 })();
 
 export { HandleTaskList };

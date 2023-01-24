@@ -63,58 +63,91 @@ input {
 
 // body
 body {
-  background-color: $darker-bg;
+  background-color: #2b2a27;
+  height: 100vh;
 }
 
 // header
-.title {
-  color: $light-text;
+header {
+  position: fixed;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  background-color: $darker-bg;
+  .title {
+    padding: 20px;
+    color: $light-text;
+  }
+}
+
+// main
+main {
+  display: flex;
+  min-height: calc(100vh - 78px);
+  background-color: #2b2a27;
+  aside {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 300px;
+    min-width: 250px;
+    padding: 20px;
+    background-color: #242320;
+    a {
+      color: $light-text;
+      font-size: 1.5rem;
+      text-decoration: none;
+    }
+  }
+}
+
+.task-section {
+  width: 900px;
+  padding: 20px 40px;
+  margin: 9vh auto;
+  .task-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
+    -webkit-user-select: none;
+    user-select: none;
+    border-block-end: 1px solid $dark-border;
+    summary {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-right: 20px;
+    }
+    details {
+      cursor: pointer;
+      max-width: 50ch;
+    }
+    .priority {
+      border-radius: 60%;
+      background-color: green;
+      padding: 6px;
+    }
+  }
+  .add-task {
+    padding: 10px 20px;
+  }
 }
 
 // aside
-aside {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: fixed;
-  height: 100%;
-  width: 280px;
-  background-color: $dark-bg;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  a {
-    color: $light-text;
-    font-size: 1.5rem;
-    text-decoration: none;
-  }
-  .btn--add-page {
-    color: $light-border;
-  }
-}
-
-.btn {
-  color: $light-border;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.aside-wrapper {
-  margin-top: 70px;
-}
 .projects-nav {
-  margin-top: 30px;
+  position: fixed;
+  align-self: center;
+  margin-top: 10vh;
   display: flex;
   flex-direction: column;
 
-.project-list {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
     gap: 1rem;
   }
   .project {
@@ -138,28 +171,102 @@ aside {
   li {
     display: flex;
     align-items: center;
+    width: 150px;
     justify-content: space-between;
     border-bottom: 3px solid black;
   }
-  .delete-project {
-    border: 2px solid $dark-border;
-    color: $light-border;
-    background-color: $darker-bg;
-    height: 32px;
-    width: 32px;
-    border-radius: 5px;
+}
+.delete-btn {
+  border: 2px solid $dark-border;
+  color: $light-border;
+  background-color: $darker-bg;
+  height: 32px;
+  width: 32px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.edit-btn {
+  @extend .delete-btn;
+}
+
+// modal
+.modal {
+  background-color: $darker-bg;
+  color: $light-text;
+  width: 100%;
+  max-width: 600px;
+
+  #task-fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .input-wrapper {
+    @extend #task-fieldset;
+    gap: 6px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+  }
+  .btn-submit {
+    border: 2px solid #ff8303;
+    border-radius: 8px;
+    background: $dark-bg;
+    width: 50px;
+    height: 50px;
+    color: #ff8303;
+    font-size: 2rem;
     cursor: pointer;
   }
 }
 
-// header
-header {
-  display: flex;
-  justify-content: center;
+.task-list {
+  color: $light-text;
   padding: 20px;
 
-  .title {
-    padding: 20px;
+  .strikethrough {
+    text-decoration: line-through $light-border solid 3px;
+  }
+
+  .btn-wrapper {
+    display: contents;
+    align-self: flex-end;
   }
 }
+// !!
+input[type='checkbox'] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  background-color: #fff;
+  /* Not removed via appearance */
+  margin: 0;
+}
+input[type='checkbox']::before {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
 
+input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+.task-checkbox {
+  border-radius: 50%;
+
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
