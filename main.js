@@ -14,12 +14,11 @@ let currentProject = 'All';
 
 document.addEventListener('DOMContentLoaded', () => {
   HandleLocalStorageProjects.setProjectList();
-  HandleLocalStorageProjects.setFilterList();
-  addFilterProjects();
+  HandleLocalStorageProjects.addToProjectList('All');
   toggleModal();
   displayProjects();
   HandleProjectInteractions.highlightAllFilter();
-  displayTasks();
+  displayAllTasks();
 });
 
 projectForm.addEventListener('submit', (e) => {
@@ -32,7 +31,14 @@ projectForm.addEventListener('submit', (e) => {
 projectsNav.addEventListener('click', (e) => {
   HandleProjectInteractions.highlightProject(e);
   removeProjectPage(e);
+  if (e.target.classList.contains('all-filter')) displayAllTasks();
+
+  if (
+    e.target.closest('.new-projects') &&
+    e.target.classList.contains('project')
+  )
   displayTasks();
+  displayDateFilters(e);
 });
 
 taskForm.addEventListener('submit', (e) => {
@@ -102,10 +108,11 @@ const addFilterProjects = () => {
 
 const displayProjects = () => {
   const projectList = HandleLocalStorageProjects.getProjectList();
-  projectList.forEach((project) => {
+  for (let i = 0; i < projectList.length; i++) {
+    if (projectList[i].title === 'All') continue;
     newProjects.innerHTML += `
-    <li ><a href="#" class ="project">${project.title} </a> <button class="delete-project delete-btn ">X</button> </li>`;
-  });
+    <li ><a href="#" class ="project">${projectList[i].title} </a> <button class="delete-project delete-btn ">X</button> </li>`;
+  }
 };
 
 const removeProjectPage = (e) => {
@@ -168,6 +175,7 @@ const HandleForm = (() => {
   const getFormData = () => {
     const formData = new FormData(taskForm);
     const taskData = Object.fromEntries(formData);
+    taskData.projectName = currentProject;
     return taskData;
   };
   const resetForm = (e) => {
@@ -236,46 +244,137 @@ const HandleTaskInteractions = (() => {
 })();
 
 const addToDateFilters = () => {
-  const task = HandleForm.getFormData();
-  const taskDueDate = parseISO(task.dueDate);
+const displayAllTasks = () => {
+  const projectList = HandleLocalStorageProjects.getProjectList();
 
-  if (isToday(taskDueDate)) {
-    HandleTaskList.addToTaskList('filterList', 'Today', task);
-  } else if (isThisWeek(taskDueDate)) {
-    HandleTaskList.addToTaskList('filterList', 'Week', task);
-  } else {
-    return;
+  taskList.innerHTML = '';
+
+  for (const project of projectList) {
+    console.log(`project : ${project}`);
+    for (const task of project.taskList) {
+      taskList.innerHTML += `
+      <li class="task-item">
+        <input
+          type="checkbox"
+          class="task-checkbox"
+          aria-label="check task"
+        />
+        <details>
+          <summary><h3>${task['taskName']}</h3>
+          </summary>
+          <p> ${task['description']}</p>
+          <p> Due Date:  ${task['dueDate']}</p>
+        </details>
+        <div class="btn-wrapper">
+          <button type="button" class="edit-btn ">
+            <svg  width="16px" height="16px">
+              <use
+                xlink:href="public/Edit.svg#edit-icon"
+              ></use>
+            </svg>
+          </button>
+          <button type="button" class="delete-btn  delete-task">
+            X
+          </button>
+        </div>
+      </li>
+      `;
+    }
+  }
+};
+
+const addTaskToProject = () => {
+const displayDateFilters = (e) => {
+  const projectList = HandleLocalStorageProjects.getProjectList();
+
+  if (e.target.classList.contains('today-filter')) {
+    taskList.innerHTML = '';
+
+    for (const project of projectList) {
+      for (const task of project.taskList) {
+        if (isToday(parseISO(task.dueDate))) {
+          taskList.innerHTML += `
+        <li class="task-item">
+          <input
+            type="checkbox"
+            class="task-checkbox"
+            aria-label="check task"
+          />
+          <details>
+            <summary><h3>${task['taskName']}</h3>
+            </summary>
+            <p> ${task['description']}</p>
+            <p> Due Date:  ${task['dueDate']}</p>
+          </details>
+          <div class="btn-wrapper">
+            <button type="button" class="edit-btn ">
+              <svg  width="16px" height="16px">
+                <use
+                  xlink:href="public/Edit.svg#edit-icon"
+                ></use>
+              </svg>
+            </button>
+            <button type="button" class="delete-btn  delete-task">
+              X
+            </button>
+          </div>
+        </li>
+        `;
+        }
+      }
+    }
+  } else if (e.target.classList.contains('week-filter')) {
+    taskList.innerHTML = '';
+
+    for (const project of projectList) {
+      for (const task of project.taskList) {
+        if (isThisWeek(parseISO(task.dueDate))) {
+          taskList.innerHTML += `
+        <li class="task-item">
+          <input
+            type="checkbox"
+            class="task-checkbox"
+            aria-label="check task"
+          />
+          <details>
+            <summary><h3>${task['taskName']}</h3>
+            </summary>
+            <p> ${task['description']}</p>
+            <p> Due Date:  ${task['dueDate']}</p>
+          </details>
+          <div class="btn-wrapper">
+            <button type="button" class="edit-btn ">
+              <svg  width="16px" height="16px">
+                <use
+                  xlink:href="public/Edit.svg#edit-icon"
+                ></use>
+              </svg>
+            </button>
+            <button type="button" class="delete-btn  delete-task">
+              X
+            </button>
+          </div>
+        </li>
+        `;
+        }
+      }
+  }
   }
 };
 
 const addTaskToProject = () => {
   const task = HandleForm.getFormData();
-  let isFilter = false;
 
-  const filterProjects = Array.from(
-    document.querySelectorAll('.filter-projects a')
-  );
-
-  filterProjects.forEach((project) => {
-    if (project.innerText === currentProject) isFilter = true;
-  });
-
-  if (currentProject === 'All') {
-    return;
-  }
-  if (isFilter) {
-    return;
-  }
   console.log(currentProject);
 
-  HandleTaskList.addToTaskList('projectList', currentProject, task);
+  HandleTaskList.addToTaskList(currentProject, task);
 };
 
 const displayTasks = () => {
-  const projectList = HandleLocalStorageProjects.getProjectList();
-  const filterList = HandleLocalStorageProjects.getFilterList();
-  const AllProjects = projectList.concat(filterList);
-  const tasks = HandleTaskList.getTaskList(AllProjects, currentProject);
+  // const projectList = HandleLocalStorageProjects.getProjectList();
+  const tasks = HandleTaskList.getTaskList(currentProject);
+
+  if (!tasks) return;
 
   taskList.innerHTML = '';
 

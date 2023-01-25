@@ -16,24 +16,23 @@ const HandleLocalStorageProjects = (() => {
   const getProjectList = () =>
     JSON.parse(localStorage.getItem('projectList')) || [];
 
+  const _checkForDuplicates = (projectList, project) => {
+    return projectList.find((item) => item.title === project.title);
+  };
+
   const addToProjectList = (projectName) => {
     const _projectList = getProjectList();
     const _project = CreateProject(projectName);
+    let isDuplicate = false;
+    if (_checkForDuplicates(_projectList, _project)) {
+      isDuplicate = true;
+      return;
+    }
 
     _projectList.push(_project);
+
     localStorage.setItem('projectList', JSON.stringify(_projectList));
   };
-
-  const addToFilterList = (projectName) => {
-    const _filterList = JSON.parse(localStorage.getItem('filterList')) || [];
-    const _project = CreateProject(projectName);
-
-    _filterList.push(_project);
-    localStorage.setItem('filterList', JSON.stringify(_filterList));
-  };
-
-  const getFilterList = () =>
-    JSON.parse(localStorage.getItem('filterList')) || [];
 
   const getProject = (projectName) => {
     const _projectList = getProjectList();
