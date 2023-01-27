@@ -150,10 +150,7 @@ main {
     text-align: center;
     gap: 1rem;
   }
-  .project {
-    display: block;
-    padding: 12px;
-  }
+
   .selected {
     color: #a35709;
     text-shadow: 1px 1px 2px black;
@@ -161,6 +158,11 @@ main {
     transition: all 0.1s;
   }
 }
+.project {
+  display: block;
+  padding: 12px;
+}
+
 .projects-header {
   align-self: center;
   color: $light-border;

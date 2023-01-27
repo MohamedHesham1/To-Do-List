@@ -25,8 +25,12 @@
           <nav class="projects-nav">
             <ul class="project-list filter-projects">
               <li><a href="#" class="project all-filter">All</a></li>
-              <li><a href="#" class="project today-filter">Today</a></li>
-              <li><a href="#" class="project week-filter">Week</a></li>
+              <li>
+                <a href="#" class="project date-filter today-filter">Today</a>
+              </li>
+              <li>
+                <a href="#" class="project date-filter week-filter">Week</a>
+              </li>
             </ul>
             <h2 class="projects-header">Projects</h2>
             <ul class="project-list new-projects"></ul>
@@ -39,7 +43,7 @@
               <form id="project-form" method="dialog">
                 <input
                   type="text"
-                  name="project-name"
+                  name="title"
                   id="project-input"
                   placeholder="project name"
                   required

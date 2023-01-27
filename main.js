@@ -1,151 +1,113 @@
 import './style.scss';
-import { HandleLocalStorageProjects } from './utils/handleLocalStorageProjects.js';
-import { HandleTaskList } from './utils/handleTaskList.js';
+import { HandleLocalStorage } from './utils/handleLocalStorage.js';
+import { HandleTasks } from './utils/handleTasks.js';
 import { isToday, parseISO, isThisWeek } from 'date-fns';
 
-const modals = document.querySelectorAll('.modal');
+const projectModal = document.querySelector('#project-modal');
+const taskModal = document.querySelector('#task-modal');
 const projectForm = document.querySelector('#project-form');
-const projectsNav = document.querySelector('.projects-nav');
 const taskForm = document.querySelector('#task-form');
+const projectsNav = document.querySelector('.projects-nav');
 const newProjects = document.querySelector('.new-projects');
-const projectInput = document.querySelector('#project-input');
+const taskSection = document.querySelector('.task-section');
 const taskList = document.querySelector('.task-list');
-let currentProject = 'All';
+let currentProject;
 
 document.addEventListener('DOMContentLoaded', () => {
-  HandleLocalStorageProjects.setProjectList();
-  HandleLocalStorageProjects.addToProjectList('All');
-  toggleModal();
+  handleModal.closeBtns();
+  HandleLocalStorage.setTaskList();
   displayProjects();
-  HandleProjectInteractions.highlightAllFilter();
-  displayAllTasks();
+  displayTasks(currentProject);
 });
 
 projectForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  addToLocalStorage();
-  HandleProjectInteractions.addProjectPage();
-  HandleForm.resetForm(e);
+  HandleLocalStorage.setProjectList();
+  HandleLocalStorage.addToProjectList(HandleForm.getFormData(projectForm));
+  displayProjects();
+  HandleForm.resetForm(projectForm);
+  handleModal.closeModal(projectModal);
 });
 
 projectsNav.addEventListener('click', (e) => {
+  if (e.target.classList.contains('add-project')) {
+    handleModal.showModal(projectModal);
+  }
   HandleProjectInteractions.highlightProject(e);
-  removeProjectPage(e);
-  if (e.target.classList.contains('all-filter')) displayAllTasks();
-
+  HandleProjectInteractions.setCurrentProject(e);
+  console.log(currentProject);
+  removeProject(e);
   if (
-    e.target.closest('.new-projects') &&
-    e.target.classList.contains('project')
-  )
-  displayTasks();
-  displayDateFilters(e);
+    e.target.classList.contains('project') &&
+    !e.target.classList.contains('date-filter')
+  ) {
+    displayTasks(currentProject);
+  }
+  if (e.target.classList.contains('date-filter')) displayTasksByDate(e);
 });
 
 taskForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  HandleTaskList.addToTaskList('filterList', 'All', HandleForm.getFormData());
-  addTaskToProject();
-
-  addToDateFilters();
-  HandleTaskInteractions.addTaskItem();
-  HandleForm.resetForm(e);
+  if (currentProject === 'Today' || currentProject === 'Week') {
+    currentProject = 'All';
+  }
+  HandleLocalStorage.addToTaskList(
+    HandleForm.getFormData(taskForm),
+    currentProject
+  );
+  HandleForm.resetForm(taskForm);
+  handleModal.closeModal(taskModal);
+  displayTasks(currentProject);
 });
 
-taskList.addEventListener('click', (e) => {
+taskSection.addEventListener('click', (e) => {
+  if (e.target.classList.contains('add-task')) handleModal.showModal(taskModal);
   HandleTaskInteractions.checkTask(e);
   removeTask(e);
 });
 
 // functions
-function toggleModal() {
-  const addProjectBtn = document.querySelector('.add-project');
-  const closeBtns = document.querySelectorAll('.close-btn');
-  const addTaskBtn = document.querySelector('.add-task');
+const handleModal = (() => {
+  const closeModal = (modal) => modal.close();
+  const showModal = (modal) => modal.showModal();
+  const closeBtns = () => {
+    const _modals = document.querySelectorAll('.modal');
+    const _closeBtns = document.querySelectorAll('.close-btn');
 
-  addProjectBtn.addEventListener('click', () => {
-    modals[0].showModal();
-  });
-  addTaskBtn.addEventListener('click', () => {
-    modals[1].showModal();
-  });
-
-  closeBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      modals.forEach((modal) => {
-        modal.close();
+    _closeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        _modals.forEach((modal) => {
+          modal.close();
+        });
       });
     });
-  });
-}
+  };
 
-const addToLocalStorage = () => {
-  const isDuplicate = HandleLocalStorageProjects.getProject(projectInput.value);
-
-  if (isDuplicate) {
-    return;
-  }
-
-  HandleLocalStorageProjects.addToProjectList(projectInput.value);
-};
-
-const addFilterProjects = () => {
-  const filterProjects = ['All', 'Today', 'Week'];
-  const filterList = HandleLocalStorageProjects.getFilterList();
-  let duplicate = false;
-
-  for (let i = 0; i < filterList.length; i++) {
-    if (filterProjects[i] === filterList[i].title) {
-      duplicate = true;
-    }
-  }
-
-  if (duplicate) return;
-
-  filterProjects.forEach((project) => {
-    HandleLocalStorageProjects.addToFilterList(project);
-  });
-};
+  return { showModal, closeModal, closeBtns };
+})();
 
 const displayProjects = () => {
-  const projectList = HandleLocalStorageProjects.getProjectList();
+  const projectList = HandleLocalStorage.getProjectList();
+  newProjects.innerHTML = '';
+
   for (let i = 0; i < projectList.length; i++) {
-    if (projectList[i].title === 'All') continue;
     newProjects.innerHTML += `
-    <li ><a href="#" class ="project">${projectList[i].title} </a> <button class="delete-project delete-btn ">X</button> </li>`;
+    <li ><a href="#" class ="project">${projectList[i].title} </a>
+    <button class="delete-project delete-btn ">X</button> </li>`;
   }
 };
 
-const removeProjectPage = (e) => {
+const removeProject = (e) => {
   if (e.target.classList.contains('delete-project')) {
     const _projectName = e.target.previousElementSibling.innerText;
     const _project = e.target.parentElement;
 
-    HandleLocalStorageProjects.removeProject(_projectName);
+    HandleLocalStorage.removeProject(_projectName);
     _project.remove();
   }
 };
 
 const HandleProjectInteractions = (() => {
-  const addProjectPage = () => {
-    const project = HandleLocalStorageProjects.getProject(projectInput.value);
-
-    const projectNames = Array.from(
-      document.querySelectorAll('.new-projects a')
-    );
-
-    const isDuplicate = projectNames.find(
-      (item) => item.innerText === project.title
-    );
-
-    if (isDuplicate) {
-      alert(`${projectInput.value} already exists!`);
-      return;
-    }
-
-    newProjects.innerHTML += `
-    <li ><a href="#" class ="project">${project.title}</a> <button class="delete-project delete-btn ">X</button></li>`;
-  };
-
   const highlightProject = (e) => {
     const projects = document.querySelectorAll('.project');
 
@@ -154,263 +116,90 @@ const HandleProjectInteractions = (() => {
         project.classList.remove('selected');
       });
       e.target.classList.add('selected');
-      currentProject = e.target.innerText;
     }
   };
-
-  const highlightAllFilter = () => {
-    const allFilter = document.querySelector('.all-filter');
-    allFilter.classList.add('selected');
+  const setCurrentProject = (e) => {
+    if (e.target.classList.contains('project'))
+      currentProject = e.target.innerText;
   };
 
   return {
     highlightProject,
-    addProjectPage,
-    highlightAllFilter,
+    setCurrentProject,
   };
 })();
 
 //! tasks
 const HandleForm = (() => {
-  const getFormData = () => {
-    const formData = new FormData(taskForm);
-    const taskData = Object.fromEntries(formData);
-    taskData.projectName = currentProject;
-    return taskData;
+  const getFormData = (form) => {
+    const formData = new FormData(form);
+    const formObject = Object.fromEntries(formData);
+    return formObject;
   };
-  const resetForm = (e) => {
-    e.target.reset();
-    modals.forEach((modal) => {
-      modal.close();
-    });
-  };
+  const resetForm = (form) => form.reset();
+
   return { getFormData, resetForm };
 })();
-
-const getTaskObject = () => HandleForm.getFormData();
 
 const HandleTaskInteractions = (() => {
   //! DOM only
 
-  const addTaskItem = () => {
-    const taskName = Array.from(document.querySelectorAll('summary h3'));
-    const isDuplicate = taskName.find((name) => {
-      return name.innerText === getTaskObject()['taskName'];
-    });
-
-    if (isDuplicate) {
-      alert(`${getTaskObject()['taskName']} already exists!`);
-      return;
-    }
-
-    taskList.innerHTML += `
-  <li class="task-item">
-    <input
-      type="checkbox"
-      class="task-checkbox"
-      aria-label="check task"
-    />
-    <details>
-      <summary><h3>${getTaskObject()['taskName']}</h3>
-      </summary>
-      <p> ${getTaskObject()['description']}</p>
-      <p> Due Date:  ${getTaskObject()['dueDate']}</p>
-    </details>
-    <div class="btn-wrapper">
-      <button type="button" class="edit-btn ">
-        <svg  width="16px" height="16px">
-          <use
-            xlink:href="public/Edit.svg#edit-icon"
-          ></use>
-        </svg>
-      </button>
-      <button type="button" class="delete-btn  delete-task">
-        X
-      </button>
-    </div>
-  </li>
-  `;
-  };
-
   // <div class= 'priority'>${getFormData()['priority']}</div>
-
   const checkTask = (e) => {
     if (e.target.classList.contains('task-checkbox')) {
       e.target.parentElement.classList.toggle('strikethrough');
     }
   };
 
-  return { addTaskItem, checkTask };
+  return { checkTask };
 })();
 
-const addToDateFilters = () => {
-const displayAllTasks = () => {
-  const projectList = HandleLocalStorageProjects.getProjectList();
+// ! need to be a module that takes the dom elements as an argument
 
-  taskList.innerHTML = '';
-
-  for (const project of projectList) {
-    console.log(`project : ${project}`);
-    for (const task of project.taskList) {
-      taskList.innerHTML += `
-      <li class="task-item">
-        <input
-          type="checkbox"
-          class="task-checkbox"
-          aria-label="check task"
-        />
-        <details>
-          <summary><h3>${task['taskName']}</h3>
-          </summary>
-          <p> ${task['description']}</p>
-          <p> Due Date:  ${task['dueDate']}</p>
-        </details>
-        <div class="btn-wrapper">
-          <button type="button" class="edit-btn ">
-            <svg  width="16px" height="16px">
-              <use
-                xlink:href="public/Edit.svg#edit-icon"
-              ></use>
-            </svg>
-          </button>
-          <button type="button" class="delete-btn  delete-task">
-            X
-          </button>
-        </div>
-      </li>
-      `;
-    }
-  }
-};
-
-const addTaskToProject = () => {
-const displayDateFilters = (e) => {
-  const projectList = HandleLocalStorageProjects.getProjectList();
-
-  if (e.target.classList.contains('today-filter')) {
-    taskList.innerHTML = '';
-
-    for (const project of projectList) {
-      for (const task of project.taskList) {
-        if (isToday(parseISO(task.dueDate))) {
-          taskList.innerHTML += `
-        <li class="task-item">
-          <input
-            type="checkbox"
-            class="task-checkbox"
-            aria-label="check task"
-          />
-          <details>
-            <summary><h3>${task['taskName']}</h3>
-            </summary>
-            <p> ${task['description']}</p>
-            <p> Due Date:  ${task['dueDate']}</p>
-          </details>
-          <div class="btn-wrapper">
-            <button type="button" class="edit-btn ">
-              <svg  width="16px" height="16px">
-                <use
-                  xlink:href="public/Edit.svg#edit-icon"
-                ></use>
-              </svg>
-            </button>
-            <button type="button" class="delete-btn  delete-task">
-              X
-            </button>
-          </div>
-        </li>
-        `;
-        }
-      }
-    }
-  } else if (e.target.classList.contains('week-filter')) {
-    taskList.innerHTML = '';
-
-    for (const project of projectList) {
-      for (const task of project.taskList) {
-        if (isThisWeek(parseISO(task.dueDate))) {
-          taskList.innerHTML += `
-        <li class="task-item">
-          <input
-            type="checkbox"
-            class="task-checkbox"
-            aria-label="check task"
-          />
-          <details>
-            <summary><h3>${task['taskName']}</h3>
-            </summary>
-            <p> ${task['description']}</p>
-            <p> Due Date:  ${task['dueDate']}</p>
-          </details>
-          <div class="btn-wrapper">
-            <button type="button" class="edit-btn ">
-              <svg  width="16px" height="16px">
-                <use
-                  xlink:href="public/Edit.svg#edit-icon"
-                ></use>
-              </svg>
-            </button>
-            <button type="button" class="delete-btn  delete-task">
-              X
-            </button>
-          </div>
-        </li>
-        `;
-        }
-      }
-  }
-  }
-};
-
-const addTaskToProject = () => {
-  const task = HandleForm.getFormData();
-
-  console.log(currentProject);
-
-  HandleTaskList.addToTaskList(currentProject, task);
-};
-
-const displayTasks = () => {
-  // const projectList = HandleLocalStorageProjects.getProjectList();
-  const tasks = HandleTaskList.getTaskList(currentProject);
+const displayTasks = (projectName) => {
+  const tasks = HandleLocalStorage.getTaskList();
 
   if (!tasks) return;
-
+  if (!projectName || projectName === 'All') {
+    taskList.innerHTML = '';
+    console.log('c 1');
+    tasks.forEach((task) => {
+      HandleTasks.displayTasks(taskList, task);
+    });
+    return;
+  }
+  console.log('D 3');
   taskList.innerHTML = '';
-
   tasks.forEach((task) => {
-    taskList.innerHTML += `
-    <li class="task-item">
-    <input
-      type="checkbox"
-      class="task-checkbox"
-      aria-label="check task"
-    />
-    <details>
-      <summary><h3>${task['taskName']}</h3>
-      </summary>
-      <p> ${task['description']}</p>
-      <p> Due Date:  ${task['dueDate']}</p>
-    </details>
-    <div class="btn-wrapper">
-      <button type="button" class="edit-btn ">
-        <svg  width="16px" height="16px">
-          <use
-            xlink:href="public/Edit.svg#edit-icon"
-          ></use>
-        </svg>
-      </button>
-      <button type="button" class="delete-btn  delete-task">
-        X
-      </button>
-    </div>
-  </li>
-  `;
+    if (projectName === task.projectName) {
+      console.log('c 2');
+
+      HandleTasks.displayTasks(taskList, task);
+    }
   });
 };
 
+const displayTasksByDate = (e) => {
+  const tasks = HandleLocalStorage.getTaskList();
+
+  if (e.target.classList.contains('today-filter')) {
+    taskList.innerHTML = '';
+    tasks.forEach((task) => {
+      if (isToday(parseISO(task.dueDate))) {
+        HandleTasks.displayTasks(taskList, task);
+      }
+    });
+  } else if (e.target.classList.contains('week-filter')) {
+    taskList.innerHTML = '';
+    tasks.forEach((task) => {
+      if (isThisWeek(parseISO(task.dueDate))) {
+        HandleTasks.displayTasks(taskList, task);
+      }
+    });
+  }
+};
 // const editTask = () => {
-//   HandleTaskList.getTaskList()
+//   HandleTasks.getTaskList()
 
 // };
 
@@ -420,33 +209,6 @@ const removeTask = (e) => {
 };
 
 // !!!
-// const removeTask = (e) => {
-//   let isFilter = false;
-
-//   const filterProjects = Array.from(
-//     document.querySelectorAll('.filter-projects a')
-//   );
-
-//   filterProjects.forEach((project) => {
-//     if (project.innerText === currentProject) isFilter = true;
-//   });
-
-//   if (e.target.classList.contains('delete-task')) {
-//     if (isFilter) {
-//       HandleTaskList.removeTask(
-//         'filterList',
-//         currentProject,
-//         HandleForm.getFormData()
-//       );
-//     } else {
-//       HandleTaskList.removeTask(
-//         'projectList',
-//         currentProject,
-//         HandleForm.getFormData()
-//       );
-//     }
-//   }
-// };
 
 {
   /* <div class= 'priority'>${task['priority']}</div> */
