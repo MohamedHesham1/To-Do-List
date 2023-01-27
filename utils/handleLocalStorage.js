@@ -38,10 +38,13 @@ const HandleLocalStorage = (() => {
 
     if (_checkForDuplicates(_projectList, project)) {
       isDuplicate = true;
+      alert(`${project.title} already exists!`);
       return;
     }
 
-    if (isDuplicate) return;
+    if (isDuplicate) {
+      return;
+    }
 
     _projectList.push(project);
 

@@ -205,6 +205,8 @@ const displayTasksByDate = (e) => {
 
 const removeTask = (e) => {
   if (!e.target.classList.contains('delete-task')) return;
+  const taskId = e.target.parentElement.parentElement.dataset.id;
+  HandleLocalStorage.removeTask(taskId);
   e.target.parentElement.parentElement.remove();
 };
 
