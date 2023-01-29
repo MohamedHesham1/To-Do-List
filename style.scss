@@ -108,11 +108,13 @@ main {
   .task-item {
     display: flex;
     align-items: center;
-    padding: 10px;
+    justify-content: flex-start;
+    position: relative;
+    padding: 16px;
     gap: 20px;
     -webkit-user-select: none;
     user-select: none;
-    border-block-end: 1px solid $dark-border;
+    border-block-end: 1px solid #a35709;
     summary {
       display: flex;
       align-items: center;
@@ -236,8 +238,11 @@ main {
   }
 
   .btn-wrapper {
-    display: contents;
-    align-self: flex-end;
+    display: flex;
+    align-self: center;
+    gap: 20px;
+    position: absolute;
+    right: 18px;
   }
 }
 // !!
