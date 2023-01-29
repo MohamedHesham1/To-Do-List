@@ -71,19 +71,6 @@ const HandleLocalStorage = (() => {
     localStorage.setItem('projectList', JSON.stringify(filteredList));
   };
 
-  // ! ??
-
-  const getTask = (taskId) => {
-    const _taskList = getTaskList();
-    return _taskList.find((task) => task.id === taskId);
-  };
-
-  const getProject = (projectName) => {
-    const _projectList = getProjectList();
-
-    return _projectList.find((project) => project.title === projectName);
-  };
-
   return {
     setProjectList,
     setTaskList,

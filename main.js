@@ -12,7 +12,10 @@ const projectsNav = document.querySelector('.projects-nav');
 const newProjects = document.querySelector('.new-projects');
 const taskSection = document.querySelector('.task-section');
 const taskList = document.querySelector('.task-list');
+const submitBtn = document.querySelector('.submit-task');
+
 let currentProject;
+let currentTaskId;
 
 document.addEventListener('DOMContentLoaded', () => {
   HandleModal.closeBtns();
@@ -35,21 +38,29 @@ taskForm.addEventListener('submit', (e) => {
   if (currentProject === 'Today' || currentProject === 'Week') {
     currentProject = 'All';
   }
+
+  if (submitBtn.classList.contains('edit-task')) {
+    HandleTasks.updateTask(currentTaskId, HandleForm.getFormData(taskForm));
+    HandleForm.resetForm(taskForm);
+    HandleModal.closeModal(taskModal);
+    displayTasks(currentProject);
+    return;
+  }
   HandleLocalStorage.addToTaskList(
     HandleForm.getFormData(taskForm),
     currentProject
   );
   HandleForm.resetForm(taskForm);
-    HandleModal.closeModal(taskModal);
+  HandleModal.closeModal(taskModal);
   displayTasks(currentProject);
 });
+
 projectsNav.addEventListener('click', (e) => {
   if (e.target.classList.contains('add-project')) {
     HandleModal.showModal(projectModal);
   }
   highlightProject(e);
   setCurrentProject(e);
-  console.log(currentProject);
   removeProject(e);
   if (
     e.target.classList.contains('project') &&
@@ -63,8 +74,14 @@ projectsNav.addEventListener('click', (e) => {
 taskSection.addEventListener('click', (e) => {
   if (e.target.classList.contains('add-task')) {
     HandleModal.showModal(taskModal);
+    HandleForm.resetForm(taskForm);
+    submitBtn.classList.remove('edit-task');
   } else if (e.target.classList.contains('edit-btn')) {
+    currentTaskId = e.target.parentElement.parentElement.dataset.id;
+    submitBtn.classList.add('edit-task');
+    handleEdit(e);
   }
+  if (e.target.closest('.task-checkbox')) checkTask(e);
   removeTask(e);
 });
 
@@ -109,54 +126,20 @@ const removeProject = (e) => {
   }
 };
 
-const HandleProjectInteractions = (() => {
-  const highlightProject = (e) => {
-    const projects = document.querySelectorAll('.project');
+const highlightProject = (e) => {
+  const projects = document.querySelectorAll('.project');
 
-    if (e.target.classList.contains('project')) {
-      projects.forEach((project) => {
-        project.classList.remove('selected');
-      });
-      e.target.classList.add('selected');
-    }
-  };
-  const setCurrentProject = (e) => {
-    if (e.target.classList.contains('project'))
-      currentProject = e.target.innerText;
-  };
-
-  return {
-    highlightProject,
-    setCurrentProject,
-  };
-})();
-
-//! tasks
-const HandleForm = (() => {
-  const getFormData = (form) => {
-    const formData = new FormData(form);
-    const formObject = Object.fromEntries(formData);
-    return formObject;
-  };
-  const resetForm = (form) => form.reset();
-
-  return { getFormData, resetForm };
-})();
-
-const HandleTaskInteractions = (() => {
-  //! DOM only
-
-  // <div class= 'priority'>${getFormData()['priority']}</div>
-  const checkTask = (e) => {
-    if (e.target.classList.contains('task-checkbox')) {
-      e.target.parentElement.classList.toggle('strikethrough');
-    }
-  };
-
-  return { checkTask };
-})();
-
-// ! need to be a module that takes the dom elements as an argument
+  if (e.target.classList.contains('project')) {
+    projects.forEach((project) => {
+      project.classList.remove('selected');
+    });
+    e.target.classList.add('selected');
+  }
+};
+const setCurrentProject = (e) => {
+  if (e.target.classList.contains('project'))
+    currentProject = e.target.innerText;
+};
 
 const displayTasks = (projectName) => {
   const tasks = HandleLocalStorage.getTaskList();
@@ -164,21 +147,23 @@ const displayTasks = (projectName) => {
   if (!tasks) return;
   if (!projectName || projectName === 'All') {
     taskList.innerHTML = '';
-    console.log('c 1');
     tasks.forEach((task) => {
       HandleTasks.displayTasks(taskList, task);
     });
     return;
   }
-  console.log('D 3');
   taskList.innerHTML = '';
   tasks.forEach((task) => {
     if (projectName === task.projectName) {
-      console.log('c 2');
-
       HandleTasks.displayTasks(taskList, task);
     }
   });
+};
+
+const checkTask = (e) => {
+  if (e.target.classList.contains('task-checkbox')) {
+    e.target.parentElement.classList.toggle('strikethrough');
+  }
 };
 
 const displayTasksByDate = (e) => {
@@ -200,10 +185,19 @@ const displayTasksByDate = (e) => {
     });
   }
 };
-// const editTask = () => {
-//   HandleTasks.getTaskList()
 
-// };
+const handleEdit = (e) => {
+  const task = HandleTasks.getTask(
+    e.target.parentElement.parentElement.dataset.id
+  );
+
+  HandleModal.showModal(taskModal);
+
+  document.querySelector('#task-name').value = task.taskName;
+  document.querySelector('#description').value = task.description;
+  document.querySelector('#due-date').value = task.dueDate;
+  document.querySelector('#priority').value = task.priority;
+};
 
 const removeTask = (e) => {
   if (!e.target.classList.contains('delete-task')) return;
@@ -211,9 +205,3 @@ const removeTask = (e) => {
   HandleLocalStorage.removeTask(taskId);
   e.target.parentElement.parentElement.remove();
 };
-
-// !!!
-
-{
-  /* <div class= 'priority'>${task['priority']}</div> */
-}
