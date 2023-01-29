@@ -1,3 +1,5 @@
+import editImg from '../assets/Edit.svg';
+
 const HandleTasks = (() => {
   const displayTasks = (parentElement, task) => {
     parentElement.innerHTML += `
@@ -19,7 +21,7 @@ const HandleTasks = (() => {
         <button type="button" class="edit-btn ">
           <svg  width="16px" height="16px">
             <use
-              xlink:href="public/Edit.svg#edit-icon"
+              xlink:href="${editImg}#edit-icon"
             ></use>
           </svg>
         </button>
