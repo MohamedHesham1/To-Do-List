@@ -42,6 +42,7 @@ taskForm.addEventListener('submit', (e) => {
   HandleForm.resetForm(taskForm);
     HandleModal.closeModal(taskModal);
   displayTasks(currentProject);
+});
 projectsNav.addEventListener('click', (e) => {
   if (e.target.classList.contains('add-project')) {
     HandleModal.showModal(projectModal);
