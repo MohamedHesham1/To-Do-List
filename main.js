@@ -2,6 +2,7 @@ import './style.scss';
 import { HandleLocalStorage } from './utils/handleLocalStorage.js';
 import { HandleTasks } from './utils/handleTasks.js';
 import { isToday, parseISO, isThisWeek } from 'date-fns';
+import { HandleForm } from './utils/handleForm.js';
 
 const projectModal = document.querySelector('#project-modal');
 const taskModal = document.querySelector('#task-modal');
@@ -14,7 +15,7 @@ const taskList = document.querySelector('.task-list');
 let currentProject;
 
 document.addEventListener('DOMContentLoaded', () => {
-  handleModal.closeBtns();
+  HandleModal.closeBtns();
   HandleLocalStorage.setTaskList();
   displayProjects();
   displayTasks(currentProject);
@@ -26,24 +27,7 @@ projectForm.addEventListener('submit', (e) => {
   HandleLocalStorage.addToProjectList(HandleForm.getFormData(projectForm));
   displayProjects();
   HandleForm.resetForm(projectForm);
-  handleModal.closeModal(projectModal);
-});
-
-projectsNav.addEventListener('click', (e) => {
-  if (e.target.classList.contains('add-project')) {
-    handleModal.showModal(projectModal);
-  }
-  HandleProjectInteractions.highlightProject(e);
-  HandleProjectInteractions.setCurrentProject(e);
-  console.log(currentProject);
-  removeProject(e);
-  if (
-    e.target.classList.contains('project') &&
-    !e.target.classList.contains('date-filter')
-  ) {
-    displayTasks(currentProject);
-  }
-  if (e.target.classList.contains('date-filter')) displayTasksByDate(e);
+  HandleModal.closeModal(projectModal);
 });
 
 taskForm.addEventListener('submit', (e) => {
@@ -56,18 +40,35 @@ taskForm.addEventListener('submit', (e) => {
     currentProject
   );
   HandleForm.resetForm(taskForm);
-  handleModal.closeModal(taskModal);
+    HandleModal.closeModal(taskModal);
   displayTasks(currentProject);
+projectsNav.addEventListener('click', (e) => {
+  if (e.target.classList.contains('add-project')) {
+    HandleModal.showModal(projectModal);
+  }
+  highlightProject(e);
+  setCurrentProject(e);
+  console.log(currentProject);
+  removeProject(e);
+  if (
+    e.target.classList.contains('project') &&
+    !e.target.classList.contains('date-filter')
+  ) {
+    displayTasks(currentProject);
+  }
+  if (e.target.classList.contains('date-filter')) displayTasksByDate(e);
 });
 
 taskSection.addEventListener('click', (e) => {
-  if (e.target.classList.contains('add-task')) handleModal.showModal(taskModal);
-  HandleTaskInteractions.checkTask(e);
+  if (e.target.classList.contains('add-task')) {
+    HandleModal.showModal(taskModal);
+  } else if (e.target.classList.contains('edit-btn')) {
+  }
   removeTask(e);
 });
 
 // functions
-const handleModal = (() => {
+const HandleModal = (() => {
   const closeModal = (modal) => modal.close();
   const showModal = (modal) => modal.showModal();
   const closeBtns = () => {
