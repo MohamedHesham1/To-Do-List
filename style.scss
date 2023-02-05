@@ -78,7 +78,7 @@ header {
   justify-content: center;
   background-color: $darker-bg;
   .title {
-    padding: 20px;
+    padding: 10px;
     color: $light-text;
   }
 }
@@ -88,26 +88,13 @@ main {
   display: flex;
   min-height: calc(100vh - 78px);
   background-color: #2b2a27;
-  aside {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 300px;
-    min-width: 250px;
-    padding: 20px;
-    background-color: #242320;
-    a {
-      color: $light-text;
-      font-size: 1.5rem;
-      text-decoration: none;
-    }
-  }
 }
 
 .task-section {
-  width: 900px;
+  width: 1250px;
   padding: 20px 40px;
   margin: 9vh auto;
+
   .task-item {
     display: flex;
     align-items: center;
@@ -134,34 +121,60 @@ main {
       padding: 6px;
     }
   }
-  .add-task {
-    padding: 10px 20px;
-  }
+}
+
+.add-btn {
+  padding: 10px 20px;
+  color: #ff8303;
+  background: #3e3223;
+  border: 1px solid #764a19;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-top: 20px;
 }
 
 // aside
-.projects-nav {
-  position: fixed;
-  align-self: center;
-  margin-top: 10vh;
+aside {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  min-width: 230px;
+  padding: 10px;
+  background-color: #242320;
+  a {
+    color: $light-text;
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+}
+.projects-nav {
+  position: fixed;
+  margin-top: 6vh;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
-  .project-list {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    gap: 1rem;
+  .filter-projects {
+    text-align: left;
+    gap: 0.5rem;
+    align-items: flex-start;
   }
 
   .selected {
-    color: #a35709;
+    color: #ff7f00;
     text-shadow: 1px 1px 2px black;
-    transform: scale(1.2);
     transition: all 0.1s;
+    font-weight: 700;
   }
+}
+.project-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
 }
 .project {
   display: block;
@@ -169,7 +182,7 @@ main {
 }
 
 .projects-header {
-  align-self: center;
+  padding: 20px 5px;
   color: $light-border;
   font-size: 2rem;
   font-weight: 700;
@@ -178,9 +191,9 @@ main {
   li {
     display: flex;
     align-items: center;
-    width: 150px;
+    width: 170px;
     justify-content: space-between;
-    border-bottom: 3px solid black;
+    border-bottom: 1px solid #4a4932;
   }
 }
 .delete-btn {
@@ -234,7 +247,6 @@ main {
 
 .task-list {
   color: $light-text;
-  padding: 20px;
 
   .strikethrough {
     text-decoration: line-through $light-border solid 3px;
@@ -245,18 +257,18 @@ main {
     align-self: center;
     gap: 20px;
     position: absolute;
-    right: 18px;
+    right: 0;
   }
 }
+
 // !!
 input[type='checkbox'] {
   /* Add if not using autoprefixer */
   -webkit-appearance: none;
   appearance: none;
-  /* For iOS < 15 to remove gradient background */
-  background-color: #fff;
-  /* Not removed via appearance */
+  background: none;
   margin: 0;
+  cursor: pointer;
 }
 input[type='checkbox']::before {
   content: '';
