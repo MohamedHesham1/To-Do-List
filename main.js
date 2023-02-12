@@ -81,11 +81,15 @@ taskSection.addEventListener('click', (e) => {
     submitBtn.classList.add('edit-task');
     handleEdit(e);
   }
-  if (e.target.closest('.task-checkbox')) checkTask(e);
+  if (e.target.closest('.task-checkbox')) {
+    e.target.closest('.task-item').classList.toggle('strikethrough');
+    HandleTasks.checkTask(
+      e.target.parentElement.parentElement.parentElement.dataset.id
+    );
+  }
   removeTask(e);
 });
 
-// functions
 const HandleModal = (() => {
   const closeModal = (modal) => modal.close();
   const showModal = (modal) => modal.showModal();
@@ -125,7 +129,6 @@ const removeProject = (e) => {
     _project.remove();
   }
 };
-
 const highlightProject = (e) => {
   const projects = document.querySelectorAll('.project');
 
@@ -145,11 +148,13 @@ const displayTasks = (projectName) => {
   const tasks = HandleLocalStorage.getTaskList();
 
   if (!tasks) return;
+
   if (!projectName || projectName === 'All') {
     taskList.innerHTML = '';
     tasks.forEach((task) => {
       HandleTasks.displayTasks(taskList, task);
     });
+
     return;
   }
   taskList.innerHTML = '';
@@ -158,12 +163,6 @@ const displayTasks = (projectName) => {
       HandleTasks.displayTasks(taskList, task);
     }
   });
-};
-
-const checkTask = (e) => {
-  if (e.target.classList.contains('task-checkbox')) {
-    e.target.parentElement.classList.toggle('strikethrough');
-  }
 };
 
 const displayTasksByDate = (e) => {

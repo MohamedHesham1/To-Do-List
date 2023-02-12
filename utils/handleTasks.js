@@ -3,13 +3,14 @@ import editImg from '../assets/Edit.svg';
 const HandleTasks = (() => {
   const displayTasks = (parentElement, task) => {
     parentElement.innerHTML += `
-    <li class="task-item" data-id ="${task.id}">
-
+    <li class="task-item ${task.isChecked ? 'strikethrough' : ''}" data-id ="${
+      task.id
+    }">
       <details>
-
         <summary><input
         type="checkbox"
         class="task-checkbox"
+        ${task.isChecked ? 'checked' : ''}
         aria-label="check task"
       />
       <h3>${task.taskName}</h3>
@@ -43,7 +44,6 @@ const HandleTasks = (() => {
   const updateTask = (taskId, newTask) => {
     const _taskList = _getTaskList();
     const oldTask = _taskList.find((task) => task.id === taskId);
-    console.log(oldTask, newTask);
     oldTask.taskName = newTask.taskName;
     oldTask.description = newTask.description;
     oldTask.priority = newTask.priority;
@@ -52,11 +52,18 @@ const HandleTasks = (() => {
   };
 
   const checkTask = (taskId) => {
-    const _taskList = getTaskList();
+    const _taskList = _getTaskList();
     const _task = _taskList.find((task) => task.id === taskId);
+    if (!_task.isChecked) {
+      _task.isChecked = true;
+    } else {
+      _task.isChecked = false;
+    }
+
+    localStorage.setItem('taskList', JSON.stringify(_taskList));
   };
 
-  return { displayTasks, getTask, updateTask };
+  return { displayTasks, getTask, updateTask, checkTask };
 })();
 
 export { HandleTasks };
